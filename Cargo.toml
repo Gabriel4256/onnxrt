@@ -12,5 +12,5 @@ documentation = "https://furiosa-ai.github.io/onnxrt/0.2.0/onnxrt"
 edition = "2018"
 
 [dependencies]
-once_cell = "1.7.2"
+once_cell = "1.5.2"
 onnxruntime-sys = "0.0.11"
