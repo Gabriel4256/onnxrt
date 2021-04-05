@@ -1467,6 +1467,26 @@ impl<'d> Value<'d> {
         Ok(Value { raw: value, phantom: PhantomData })
     }
 
+    // newly added API
+    pub fn new_tensor_with_ptr<T: AsONNXTensorElementDataType>(
+        memory_info: &MemoryInfo,
+        ptr: *mut T,
+        size_of: usize,
+        shape: &[i64],
+    ) -> self::Result<Self> {
+        let mut value = ptr::null_mut::<OrtValue>();
+        bail_on_error!(ORT_API.CreateTensorWithDataAsOrtValue.unwrap()(
+            memory_info.raw.as_ptr(),
+            ptr as *mut c_void,
+            size_of.try_into()?,
+            shape.as_ptr(),
+            shape.len().try_into()?,
+            T::as_onnx_tensor_element_data_type(),
+            &mut value,
+        ));
+        Ok(Value { raw: value, phantom: PhantomData })
+    }
+    
     /// [`onnxruntime_c_api.h`](https://github.com/microsoft/onnxruntime/blob/718ca7f92085bef4b19b1acc71c1e1f3daccde94/include/onnxruntime/core/session/onnxruntime_c_api.h#L505-L508)
     pub fn is_tensor(&self) -> bool {
         let mut result = 0;
